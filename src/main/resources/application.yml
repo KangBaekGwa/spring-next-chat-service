@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: SuhoServer
+  datasource:
+    url: jdbc:postgresql://localhost:5432/chatdb?autoCommit=false
+    username: baekgwa
+    password: baekgwa1234
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 30
+      minimum-idle: 10
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+      auto-commit: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+        cache:
+          use_second_level_cache: false
+          use_query_cache: false
+  lifecycle:
+    timeout-per-shutdown-phase: 10s
+
+server:
+  shutdown: graceful
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 10
+    max-connections: 8192
+    accept-count: 100
+    uri-encoding: UTF-8
+    max-http-form-post-size: 2MB
+    max-swallow-size: 2MB
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+auth:
+  secretKey: JWT_SECRET_KEY_JWT_SECRET_KEY_JWT_SECRET_KEY_JWT_SECRET_KEY_JWT_SECRET_KEY_JWT_SECRET_KEY_JWT_SECRET_KEY_JWT_SECRET_KEY_JWT_SECRET_KEY_JWT_SECRET_KEY_
+  tokenExpirationMin: 1440
