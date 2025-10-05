@@ -1,14 +1,14 @@
 package com.baekgwa.chatservice.global.config;
 
-import static org.springframework.http.HttpMethod.*;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,6 +42,7 @@ public class SecurityConfig {
 	private final AuthenticationFilter authenticationFilter;
 	private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
+	private final Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry> authorizeRequestsCustomizer;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -58,31 +59,14 @@ public class SecurityConfig {
 		http
 			// ✅ 보안 관련 설정 (CSRF, CORS, 세션)
 			.csrf(AbstractHttpConfigurer::disable)
-
 			// ✅ 기본 인증 방식 비활성화 (JWT 사용)
 			.httpBasic(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
 			// ✅ Cors Setting
 			.cors(cors -> cors.configurationSource(corsConfigurationSource))
-
 			// ✅ End-point Setting
-			.authorizeHttpRequests(authorize -> authorize
-				// 프론트엔드에서 적용될 예외 포인트 설정
-				.requestMatchers("/error", "/favicon.ico").permitAll()
-				// Swagger 문서 접근 허용
-				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**",
-					"/swagger-ui.html").permitAll()
-
-				// authentication
-				.requestMatchers(POST, "/auth/login").permitAll()
-				.requestMatchers(POST, "/auth/logout").permitAll()
-
-				// user
-				.requestMatchers(POST, "/user/signup").permitAll()
-
-				.anyRequest().authenticated());
+			.authorizeHttpRequests(authorizeRequestsCustomizer);
 
 		// ❗ 인증 Filter 추가
 		http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);

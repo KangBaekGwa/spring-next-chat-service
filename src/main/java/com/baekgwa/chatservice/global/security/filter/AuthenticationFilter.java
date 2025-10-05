@@ -3,8 +3,8 @@ package com.baekgwa.chatservice.global.security.filter;
 import static com.baekgwa.chatservice.global.security.constant.JwtConstant.*;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,13 +13,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.baekgwa.chatservice.global.response.ErrorCode;
+import com.baekgwa.chatservice.global.response.RequestUtil;
 import com.baekgwa.chatservice.global.response.ResponseUtil;
 import com.baekgwa.chatservice.global.security.jwt.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -47,22 +47,14 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 
 		// 1. Token cookie 에서 추출
-		Cookie[] cookies = request.getCookies();
-		if(cookies == null) {
-			filterChain.doFilter(request, response);
-			return;
-		}
-		String accessToken = Arrays.stream(cookies)
-			.filter(cookie -> cookie.getName().equals("accessToken"))
-			.map(Cookie::getValue)
-			.findFirst()
-			.orElse(null);
+		Optional<String> accessTokenOptional = RequestUtil.getCookieValue(request, ACCESS_TOKEN_COOKIE_NAME);
 
 		// 2. token 유무 검증
-		if (accessToken == null) {
+		if (accessTokenOptional.isEmpty()) {
 			filterChain.doFilter(request, response);
 			return;
 		}
+		String accessToken = accessTokenOptional.get();
 
 		// 3. token 유효성 검증
 		if (jwtUtil.isExpired(accessToken)) {
@@ -77,7 +69,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 		Long userId = jwtUtil.getUserId(accessToken);
 
 		// 5. Security Context 에 인증 정보 추가
-		SimpleGrantedAuthority authority = new SimpleGrantedAuthority(null);
+		SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
 		UsernamePasswordAuthenticationToken authentication =
 			new UsernamePasswordAuthenticationToken(userId, null, List.of(authority));
 		SecurityContextHolder.getContext().setAuthentication(authentication);

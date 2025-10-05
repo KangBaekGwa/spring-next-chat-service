@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.baekgwa.chatservice.global.environment.JwtProperties;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -41,17 +42,11 @@ public class JwtUtil {
 	}
 
 	public boolean isExpired(String token) {
-		try {
-			Date expiration = Jwts.parser()
-				.verifyWith(secretKey)
-				.build()
-				.parseSignedClaims(token)
-				.getPayload()
-				.getExpiration();
-			return expiration.before(new Date());
-		} catch (Exception e) {
+		Claims claims = parseClaims(token);
+		if (claims == null) {
 			return true;
 		}
+		return claims.getExpiration().before(new Date());
 	}
 
 	public String createJwt(Long userId) {
@@ -64,11 +59,35 @@ public class JwtUtil {
 	}
 
 	public Long getUserId(String token) {
-		try {
-			return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
-				.get(CLAIM_KEY_USER_ID, Long.class);
-		} catch (Exception e) {
+		Claims claims = parseClaims(token);
+		if (claims == null) {
 			return null;
+		}
+		return claims.get(CLAIM_KEY_USER_ID, Long.class);
+	}
+
+	public Date getExpirationDate(String token) {
+		Claims claims = parseClaims(token);
+		if (claims == null) {
+			return null;
+		}
+		return claims.getExpiration();
+	}
+
+	/**
+	 * 토큰을 파싱하여 Claims 정보를 반환하는 private 헬퍼 메서드
+	 * @param token JWT 토큰
+	 * @return Claims 객체, 파싱 실패 시 null 반환
+	 */
+	private Claims parseClaims(String token) {
+		try {
+			return Jwts.parser()
+				.verifyWith(secretKey)
+				.build()
+				.parseSignedClaims(token)
+				.getPayload();
+		} catch (Exception e) {
+			return null; // 파싱 실패 시 null 반환
 		}
 	}
 }

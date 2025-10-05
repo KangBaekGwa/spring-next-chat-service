@@ -6,8 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 
 /**
  * PackageName : com.baekgwa.chatservice.global.response
@@ -20,7 +19,7 @@ import lombok.NoArgsConstructor;
  * ---------------------------------------------------------------------------------------------------------------------
  * 2025-10-02     Baekgwa               Initial creation
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class ResponseUtil {
 
 	public static void addCookie(HttpServletResponse response, String name, String value, int maxAgeSeconds) {
