@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,7 +32,13 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Getter
-@Table(name = "chat_message")
+@Table(name = "chat_message",
+	uniqueConstraints = {
+		@UniqueConstraint(
+			name = "uk_chat_room_id_sequence",
+			columnNames = {"chat_room_id", "sequence"}
+		)
+	})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatMessageEntity extends TemporalEntity {
 

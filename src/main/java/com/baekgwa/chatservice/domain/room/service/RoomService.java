@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baekgwa.chatservice.domain.chat.service.ChatMessageSequenceService;
 import com.baekgwa.chatservice.domain.room.dto.RoomRequest;
 import com.baekgwa.chatservice.domain.room.dto.RoomResponse;
 import com.baekgwa.chatservice.domain.room.type.RoomSortType;
@@ -43,6 +44,7 @@ public class RoomService {
 	private final PasswordEncoder passwordEncoder;
 	private final ChatRoomRepository chatRoomRepository;
 	private final ChatRoomMemberRepository chatRoomMemberRepository;
+	private final ChatMessageSequenceService chatMessageSequenceService;
 
 	@Transactional
 	public RoomResponse.CreateChatRoomResponse createChatRoom(RoomRequest.CreateChatRoomRequest request, Long userId) {
@@ -58,6 +60,9 @@ public class RoomService {
 		// 3. 채팅방에, 생성자는 기본적으로 채팅 멤버로 등록
 		ChatRoomMemberEntity newChatRoomMember = ChatRoomMemberEntity.of(findUser, savedChatRoom);
 		chatRoomMemberRepository.save(newChatRoomMember);
+
+		// 4. 신규 채팅방에, 메세지 순서 (sequence 값) 등록
+		chatMessageSequenceService.setNewRoomMessageSequence(newChatRoom.getId());
 
 		return RoomResponse.CreateChatRoomResponse.from(savedChatRoom);
 	}

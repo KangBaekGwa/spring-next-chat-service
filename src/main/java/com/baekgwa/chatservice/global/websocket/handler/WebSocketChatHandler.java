@@ -1,5 +1,7 @@
 package com.baekgwa.chatservice.global.websocket.handler;
 
+import static com.baekgwa.chatservice.global.websocket.constant.WebSocketConstant.*;
+
 import java.io.IOException;
 
 import org.springframework.stereotype.Component;
@@ -55,7 +57,7 @@ public class WebSocketChatHandler implements WebSocketHandler {
 			String payload = ((TextMessage)message).getPayload();
 			ChatRequestDto.ChatMessageRequest requestDto
 				= objectMapper.readValue(payload, ChatRequestDto.ChatMessageRequest.class);
-			Long userId = (Long)session.getAttributes().get("userId");
+			Long userId = (Long)session.getAttributes().get(SESSION_ATTRIBUTE_KEY_USER_ID);
 
 			switch (requestDto.getType()) {
 				case ENTER -> handleEnter(session, requestDto.getRoomId(), userId);
@@ -81,7 +83,7 @@ public class WebSocketChatHandler implements WebSocketHandler {
 		}
 
 		// 2. 만약 사용자가 다른 방에 이미 들어가 있었다면, 이전 방에서 퇴장 처리
-		Long oldRoomId = (Long)session.getAttributes().get("roomId");
+		Long oldRoomId = (Long)session.getAttributes().get(SESSION_ATTRIBUTE_KEY_ROOM_ID);
 		if (oldRoomId != null && !oldRoomId.equals(roomId)) {
 			chatRoomManager.leaveRoom(oldRoomId, session);
 			log.info("User {} moved from room {} to {}", userId, oldRoomId, roomId);
@@ -89,7 +91,7 @@ public class WebSocketChatHandler implements WebSocketHandler {
 
 		// 3. 권한이 확인된 경우에만 입장 처리
 		chatRoomManager.enterRoom(roomId, session);
-		session.getAttributes().put("roomId", roomId);
+		session.getAttributes().put(SESSION_ATTRIBUTE_KEY_ROOM_ID, roomId);
 
 		log.info("User {} entered room {}", userId, roomId);
 	}
@@ -107,7 +109,7 @@ public class WebSocketChatHandler implements WebSocketHandler {
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		// 세션에 저장된 roomId를 통해 퇴장 처리
-		Long roomId = (Long)session.getAttributes().get("roomId");
+		Long roomId = (Long)session.getAttributes().get(SESSION_ATTRIBUTE_KEY_ROOM_ID);
 		if (roomId != null) {
 			chatRoomManager.leaveRoom(roomId, session);
 		}
