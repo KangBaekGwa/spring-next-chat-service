@@ -14,9 +14,7 @@ import com.baekgwa.chatservice.domain.chat.dto.ChatResponseDto;
 import com.baekgwa.chatservice.domain.chat.manager.ChatRoomManager;
 import com.baekgwa.chatservice.domain.chat.service.ChatMessageSequenceService;
 import com.baekgwa.chatservice.domain.chat.service.ChatService;
-import com.baekgwa.chatservice.model.chat.member.repository.ChatRoomMemberRepository;
 import com.baekgwa.chatservice.model.chat.message.entity.ChatMessageEntity;
-import com.baekgwa.chatservice.model.chat.room.repository.ChatRoomRepository;
 import com.baekgwa.chatservice.model.user.entity.UserEntity;
 import com.baekgwa.chatservice.model.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,9 +52,10 @@ public class WebSocketChatHandler implements WebSocketHandler {
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
 		try {
-			String payload = ((TextMessage) message).getPayload();
-			ChatRequestDto requestDto = objectMapper.readValue(payload, ChatRequestDto.class);
-			Long userId = (Long) session.getAttributes().get("userId");
+			String payload = ((TextMessage)message).getPayload();
+			ChatRequestDto.ChatMessageRequest requestDto
+				= objectMapper.readValue(payload, ChatRequestDto.ChatMessageRequest.class);
+			Long userId = (Long)session.getAttributes().get("userId");
 
 			switch (requestDto.getType()) {
 				case ENTER -> handleEnter(session, requestDto.getRoomId(), userId);
@@ -82,7 +81,7 @@ public class WebSocketChatHandler implements WebSocketHandler {
 		}
 
 		// 2. 만약 사용자가 다른 방에 이미 들어가 있었다면, 이전 방에서 퇴장 처리
-		Long oldRoomId = (Long) session.getAttributes().get("roomId");
+		Long oldRoomId = (Long)session.getAttributes().get("roomId");
 		if (oldRoomId != null && !oldRoomId.equals(roomId)) {
 			chatRoomManager.leaveRoom(oldRoomId, session);
 			log.info("User {} moved from room {} to {}", userId, oldRoomId, roomId);
@@ -101,14 +100,14 @@ public class WebSocketChatHandler implements WebSocketHandler {
 		String username = userRepository.findById(userId)
 			.map(UserEntity::getUsername)
 			.orElse("Unknown User");
-		ChatResponseDto responseDto = ChatResponseDto.from(savedMessage, username);
-		chatRoomManager.sendMessageToRoom(roomId, responseDto);
+		ChatResponseDto.ChatMessageResponse chatMessageResponse = ChatResponseDto.ChatMessageResponse.from(savedMessage, username);
+		chatRoomManager.sendMessageToRoom(roomId, chatMessageResponse);
 	}
 
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		// 세션에 저장된 roomId를 통해 퇴장 처리
-		Long roomId = (Long) session.getAttributes().get("roomId");
+		Long roomId = (Long)session.getAttributes().get("roomId");
 		if (roomId != null) {
 			chatRoomManager.leaveRoom(roomId, session);
 		}

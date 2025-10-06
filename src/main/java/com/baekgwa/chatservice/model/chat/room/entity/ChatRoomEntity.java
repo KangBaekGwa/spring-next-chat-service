@@ -45,16 +45,21 @@ public class ChatRoomEntity extends TemporalEntity {
 	@JoinColumn(name = "creator_id", nullable = false)
 	private UserEntity owner;
 
+	@Column(name = "password")
+	private String password;
+
 	@Builder(access = AccessLevel.PRIVATE)
-	private ChatRoomEntity(String title, UserEntity owner) {
+	public ChatRoomEntity(String title, UserEntity owner, String password) {
 		this.title = title;
 		this.owner = owner;
+		this.password = password;
 	}
 
-	public static ChatRoomEntity of(String title, UserEntity owner) {
+	public static ChatRoomEntity of(String title, UserEntity owner, String password) {
 		return ChatRoomEntity.builder()
 			.title(title)
 			.owner(owner)
+			.password(password)
 			.build();
 	}
 }

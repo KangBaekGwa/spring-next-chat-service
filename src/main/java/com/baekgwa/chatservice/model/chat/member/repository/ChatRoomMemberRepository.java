@@ -1,8 +1,9 @@
 package com.baekgwa.chatservice.model.chat.member.repository;
 
+import java.util.List;
+
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import com.baekgwa.chatservice.model.chat.member.entity.ChatRoomMemberEntity;
 import com.baekgwa.chatservice.model.chat.room.entity.ChatRoomEntity;
@@ -22,6 +23,6 @@ import com.baekgwa.chatservice.model.user.entity.UserEntity;
 public interface ChatRoomMemberRepository extends JpaRepository<ChatRoomMemberEntity, Long> {
 	boolean existsByUserAndChatRoom(UserEntity sender, ChatRoomEntity chatRoom);
 
-	@Query("SELECT crm FROM ChatRoomMemberEntity crm WHERE crm.user.id = :userId AND crm.chatRoom.id = :chatRoomId")
-	boolean existsByUserIdAndChatRoomId(@Param("userId") Long userId, @Param("chatRoomId") Long chatRoomId);
+	@EntityGraph(attributePaths = {"chatRoom"})
+	List<ChatRoomMemberEntity> findAllByUser(UserEntity findUser);
 }

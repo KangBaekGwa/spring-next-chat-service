@@ -51,6 +51,11 @@ public class ChatService {
 
 	@Transactional(readOnly = true)
 	public boolean isRoomMember(Long userId, Long roomId) {
-		return chatRoomMemberRepository.existsByUserIdAndChatRoomId(userId, roomId);
+		UserEntity user = userRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("Sender not found"));
+		ChatRoomEntity chatRoom = chatRoomRepository.findById(roomId)
+			.orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
+
+		return chatRoomMemberRepository.existsByUserAndChatRoom(user, chatRoom);
 	}
 }

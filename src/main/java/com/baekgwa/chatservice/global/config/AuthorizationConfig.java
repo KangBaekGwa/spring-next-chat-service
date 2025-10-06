@@ -38,6 +38,9 @@ public class AuthorizationConfig {
 			// user
 			.requestMatchers(POST, "/user/signup").permitAll()
 
+			// room
+			.requestMatchers(GET, "/room").permitAll()
+
 			.anyRequest().authenticated();
 	}
 }

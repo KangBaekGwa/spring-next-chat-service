@@ -10,6 +10,8 @@ import com.baekgwa.chatservice.domain.user.service.UserService;
 import com.baekgwa.chatservice.global.response.BaseResponse;
 import com.baekgwa.chatservice.global.response.SuccessCode;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -27,11 +29,13 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
+@Tag(name = "User Controller", description = "회원 도메인")
 public class UserController {
 
 	private final UserService userService;
 
 	@PostMapping("/signup")
+	@Operation(summary = "회원 가입")
 	public BaseResponse<Void> login(
 		@RequestBody @Valid UserRequest.SignupDto signupDto
 	) {

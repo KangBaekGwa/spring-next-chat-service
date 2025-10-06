@@ -15,6 +15,8 @@ import com.baekgwa.chatservice.global.response.BaseResponse;
 import com.baekgwa.chatservice.global.response.ResponseUtil;
 import com.baekgwa.chatservice.global.response.SuccessCode;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,12 +35,14 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
+@Tag(name = "Auth Controller", description = "인증 도메인")
 public class AuthController {
 
 	private final AuthService authService;
 	private final JwtProperties jwtProperties;
 
 	@PostMapping("/login")
+	@Operation(summary = "로그인")
 	public BaseResponse<Void> login(
 		@Valid @RequestBody AuthRequest.LoginDto loginDto,
 		HttpServletResponse response
@@ -53,6 +57,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/logout")
+	@Operation(summary = "로그아웃")
 	public BaseResponse<Void> logout(HttpServletResponse response) {
 		ResponseUtil.removeCookie(response, ACCESS_TOKEN_COOKIE_NAME);
 		return BaseResponse.success(SuccessCode.LOGOUT_SUCCESS);
