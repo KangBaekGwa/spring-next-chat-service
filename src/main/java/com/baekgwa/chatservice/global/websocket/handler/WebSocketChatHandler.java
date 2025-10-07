@@ -101,7 +101,7 @@ public class WebSocketChatHandler implements WebSocketHandler {
 
 	@Override
 	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-		log.error("Transport error on session {}: {}", session.getId(), exception.getMessage());
+		log.error("Transport error occurred for session {}: {}", session.getId(), exception.getMessage(), exception);
 	}
 
 	@Override
@@ -131,7 +131,8 @@ public class WebSocketChatHandler implements WebSocketHandler {
 		log.debug("[Session : {}] 회원 [userId : {}] 가 방 [roomId : {}]에 접속하였습니다.", session.getId(), userId, roomId);
 	}
 
-	private void handleTalk(WebSocketSession session, Long userId, Long roomId, String content) throws JsonProcessingException {
+	private void handleTalk(WebSocketSession session, Long userId, Long roomId, String content) throws
+		JsonProcessingException {
 		// 1. 메시지 순서용 sequence 계산
 		long sequence = chatMessageSequenceService.getNextSequence(roomId);
 
