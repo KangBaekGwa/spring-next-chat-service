@@ -14,6 +14,7 @@ import com.baekgwa.chatservice.global.exception.SocketChatException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ChatRoomManager {
 
 	private final ObjectMapper objectMapper;
+	@Getter
 	private final Map<Long, Set<WebSocketSession>> roomSessions = new ConcurrentHashMap<>();
 
 	/**

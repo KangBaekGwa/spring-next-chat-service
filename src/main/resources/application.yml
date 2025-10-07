@@ -58,3 +58,9 @@ server:
 auth:
   secretKey: JWT_SECRET_KEY_JWT_SECRET_KEY_JWT_SECRET_KEY_JWT_SECRET_KEY_JWT_SECRET_KEY_JWT_SECRET_KEY_JWT_SECRET_KEY_JWT_SECRET_KEY_JWT_SECRET_KEY_JWT_SECRET_KEY_
   tokenExpirationMin: 1440
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,chat-rooms"
