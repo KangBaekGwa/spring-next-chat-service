@@ -2,7 +2,6 @@ package com.baekgwa.chatservice.global.websocket.interceptor;
 
 import static com.baekgwa.chatservice.global.security.constant.JwtConstant.*;
 
-import java.security.Principal;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
@@ -10,7 +9,6 @@ import java.util.Optional;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -47,12 +45,12 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
 
 		// 1. Security 에 의해 인증된 사용자 정보 조회
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if(authentication == null) {
+		if (authentication == null) {
 			log.warn("Handshake rejected: User not authenticated. URI: {}", request.getURI());
 			return false;
 		}
 
-		Long userId = (Long) authentication.getPrincipal();
+		Long userId = (Long)authentication.getPrincipal();
 
 		// 2. Token 만료기간 기준으로, 해당 Session 의 만료기간 설정
 		if (!(request instanceof ServletServerHttpRequest servletRequest)) {
@@ -82,7 +80,9 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
 	@Override
 	public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
 		Exception exception) {
-		log.error("Handshake failed with exception. URI: {}, Exception: {}",
-			request.getURI(), exception.getMessage());
+		if (exception != null) {
+			log.error("Handshake failed with exception. URI: {}, Exception: {}",
+				request.getURI(), exception.getMessage());
+		}
 	}
 }

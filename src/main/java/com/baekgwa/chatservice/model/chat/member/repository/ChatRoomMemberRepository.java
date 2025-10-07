@@ -21,7 +21,7 @@ import com.baekgwa.chatservice.model.user.entity.UserEntity;
  * 2025-10-04     Baekgwa               Initial creation
  */
 public interface ChatRoomMemberRepository extends JpaRepository<ChatRoomMemberEntity, Long> {
-	boolean existsByUserAndChatRoom(UserEntity sender, ChatRoomEntity chatRoom);
+	boolean existsByUserAndChatRoom(UserEntity user, ChatRoomEntity chatRoom);
 
 	@EntityGraph(attributePaths = {"chatRoom"})
 	List<ChatRoomMemberEntity> findAllByUser(UserEntity findUser);

@@ -34,6 +34,9 @@ public enum SuccessCode {
 	JOINED_CHAT_ROOM_LIST_SUCCESS(HttpStatus.OK, "내가 가입한 채팅방 목록 조회 성공"),
 	SEARCH_ROOM_SUCCESS(HttpStatus.OK, "채팅방 조회 성공"),
 
+	// Chat
+	GET_CHAT_MESSAGE_SUCCESS(HttpStatus.OK, "채팅방 메시지 조회 성공"),
+
 	// Common
 	REQUEST_SUCCESS(HttpStatus.OK, "요청 응답 성공.");
 

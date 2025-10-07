@@ -77,12 +77,17 @@ public class RoomService {
 		UserEntity findUser = userRepository.findById(userId)
 			.orElseThrow(() -> new GlobalException(ErrorCode.NOT_FOUND_USER));
 
-		// 3. 채팅방 비밀번호 검증
+		// 3. 이미 가입된 멤버인지 확인
+		if (chatRoomMemberRepository.existsByUserAndChatRoom(findUser, findChatRoom)) {
+			throw new GlobalException(ErrorCode.ALREADY_ROOM_MEMBER);
+		}
+
+		// 4. 채팅방 비밀번호 검증
 		if (!passwordEncoder.matches(request.getPassword(), findChatRoom.getPassword())) {
 			throw new GlobalException(ErrorCode.INCORRECT_CHAT_ROOM_PASSWORD);
 		}
 
-		// 3. 채팅방에 신규 멤버 추가.
+		// 5. 채팅방에 신규 멤버 추가.
 		ChatRoomMemberEntity newChatRoomMember = ChatRoomMemberEntity.of(findUser, findChatRoom);
 		chatRoomMemberRepository.save(newChatRoomMember);
 	}

@@ -29,6 +29,11 @@ spring:
         cache:
           use_second_level_cache: false
           use_query_cache: false
+  data:
+    redis:
+      host: localhost
+      port: 6389
+      password: 1234
   lifecycle:
     timeout-per-shutdown-phase: 10s
 

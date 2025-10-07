@@ -35,6 +35,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response,
 		AccessDeniedException accessDeniedException) throws IOException, ServletException {
-		ResponseUtil.errorResponse(response, ErrorCode.FORBIDDEN, objectMapper);
+		ResponseUtil.errorResponse(response, ErrorCode.FORBIDDEN_ERROR, objectMapper);
 	}
 }

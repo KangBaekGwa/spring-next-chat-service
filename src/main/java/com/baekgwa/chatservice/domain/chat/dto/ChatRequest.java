@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * PackageName : com.baekgwa.chatservice.domain.chat.dto
- * FileName    : ChatRequestDto
+ * FileName    : ChatRequest
  * Author      : Baekgwa
  * Date        : 2025-10-04
  * Description : 
@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
  * 2025-10-04     Baekgwa               Initial creation
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ChatRequestDto {
+public class ChatRequest {
 
 	@Getter
 	@NoArgsConstructor

@@ -1,6 +1,5 @@
 package com.baekgwa.chatservice.domain.room.controller;
 
-import java.security.Principal;
 import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -48,9 +47,8 @@ public class RoomController {
 	@Operation(summary = "채팅방 생성")
 	public BaseResponse<RoomResponse.CreateChatRoomResponse> createNewChatRoom(
 		@Valid @RequestBody RoomRequest.CreateChatRoomRequest request,
-		@AuthenticationPrincipal Principal principal
+		@AuthenticationPrincipal Long userId
 	) {
-		Long userId = Long.parseLong(principal.getName());
 		RoomResponse.CreateChatRoomResponse response
 			= roomService.createChatRoom(request, userId);
 
@@ -62,9 +60,8 @@ public class RoomController {
 	public BaseResponse<Void> joinChatRoom(
 		@PathVariable("roomId") Long roomId,
 		@Valid @RequestBody RoomRequest.JoinChatRoomRequest request,
-		@AuthenticationPrincipal Principal principal
+		@AuthenticationPrincipal Long userId
 	) {
-		Long userId = Long.parseLong(principal.getName());
 		roomService.joinChatRoom(roomId, request, userId);
 
 		return BaseResponse.success(SuccessCode.JOIN_CHAT_ROOM_SUCCESS);
@@ -73,9 +70,8 @@ public class RoomController {
 	@GetMapping("/joined")
 	@Operation(summary = "참여한 채팅방 목록 조회")
 	public BaseResponse<List<RoomResponse.JoinedRoomResponse>> getJoinedChatRoomList(
-		@AuthenticationPrincipal Principal principal
+		@AuthenticationPrincipal Long userId
 	) {
-		Long userId = Long.parseLong(principal.getName());
 		List<RoomResponse.JoinedRoomResponse> response = roomService.getJoinedChatRoomList(userId);
 
 		return BaseResponse.success(SuccessCode.JOINED_CHAT_ROOM_LIST_SUCCESS, response);
