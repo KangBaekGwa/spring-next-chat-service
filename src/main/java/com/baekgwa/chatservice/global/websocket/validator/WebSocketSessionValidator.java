@@ -1,5 +1,7 @@
 package com.baekgwa.chatservice.global.websocket.validator;
 
+import static com.baekgwa.chatservice.global.websocket.constant.WebSocketConstant.*;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -51,7 +53,7 @@ public class WebSocketSessionValidator {
 			.flatMap(Set::stream) // 모든 방의 세션들을 하나의 스트림으로 만듦
 			.distinct()
 			.forEach(session -> {
-				Date expirationDate = (Date)session.getAttributes().get("expirationDate");
+				Date expirationDate = (Date)session.getAttributes().get(SESSION_ATTRIBUTE_KEY_EXPIRED_DATE);
 
 				if (expirationDate != null && expirationDate.before(now)) {
 					log.warn("세션 [sessionId : {}] expired. 연결을 해제 합니다.", session.getId());

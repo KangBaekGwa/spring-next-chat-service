@@ -18,5 +18,6 @@ import lombok.NoArgsConstructor;
 public class WebSocketConstant {
 	// 세션 attribute 에 등록될 key
 	public static final String SESSION_ATTRIBUTE_KEY_USER_ID = "userId";
+	public static final String SESSION_ATTRIBUTE_KEY_EXPIRED_DATE = "expirationDate";
 	public static final String SESSION_ATTRIBUTE_KEY_ROOM_ID = "roomId";
 }

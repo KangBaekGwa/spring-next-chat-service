@@ -1,6 +1,7 @@
 package com.baekgwa.chatservice.global.websocket.interceptor;
 
 import static com.baekgwa.chatservice.global.security.constant.JwtConstant.*;
+import static com.baekgwa.chatservice.global.websocket.constant.WebSocketConstant.*;
 
 import java.util.Date;
 import java.util.Map;
@@ -71,8 +72,8 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
 		Date expirationDate = jwtUtil.getExpirationDate(accessToken);
 
 		// 3. 토큰 정보를 세션 속성에 저장.
-		attributes.put("userId", userId);
-		attributes.put("expirationDate", expirationDate);
+		attributes.put(SESSION_ATTRIBUTE_KEY_USER_ID, userId);
+		attributes.put(SESSION_ATTRIBUTE_KEY_EXPIRED_DATE, expirationDate);
 
 		return true;
 	}
